@@ -4,7 +4,8 @@ import NoteModel from "../model/note.js";
 
 export const getNotes = async (req, res) => {
     try {
-        const data = await NoteModel.find({});
+        const data = await NoteModel.find({})
+            .sort({ isPinned: -1 }).sort({ _id: -1 });
 
         return res.status(200).json({
             status: 200,
@@ -67,6 +68,14 @@ export const updateNote = async (req, res) => {
 
 export const deleteNote = async (req, res) => {
     try {
+
+        const existingNote = await NoteModel.findById(req.params.id);
+        if (!existingNote) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Note not found'
+            });
+        }
         const data = await NoteModel.findByIdAndDelete(req.params.id);
         return res.status(200).json({
             status: 200,
