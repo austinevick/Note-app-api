@@ -8,6 +8,7 @@ dotenv.config();
 const app = express();
 
 
+app.use(express.raw());
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));

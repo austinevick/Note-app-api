@@ -4,7 +4,27 @@ import NoteModel from "../model/note.js";
 
 export const getNotes = async (req, res) => {
     try {
-        const data = await NoteModel.find({})
+        const data = await NoteModel.find({ "isArchived": false })
+            .sort({ isPinned: -1 }).sort({ _id: -1 });
+
+        return res.status(200).json({
+            status: 200,
+            message: 'Note retrieved successfully',
+            data: data
+        });
+    } catch (error) {
+        console.log(error);
+
+        return res.status(400).json({
+            status: 400,
+            message: error.message
+        });
+    }
+};
+
+export const getArchivedNotes = async (req, res) => {
+    try {
+        const data = await NoteModel.find({ "isArchived": true })
             .sort({ isPinned: -1 }).sort({ _id: -1 });
 
         return res.status(200).json({
@@ -37,6 +57,8 @@ export const createNote = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
+
         return res.status(400).json({
             status: 400,
             message: error.message
@@ -52,8 +74,8 @@ export const updateNote = async (req, res) => {
             {
                 title, content, isPinned, isArchived
             }, { new: true });
-        return res.status(201).json({
-            status: 201,
+        return res.status(200).json({
+            status: 200,
             message: 'Note updated successfully',
             data: data
         });
@@ -76,11 +98,10 @@ export const deleteNote = async (req, res) => {
                 message: 'Note not found'
             });
         }
-        const data = await NoteModel.findByIdAndDelete(req.params.id);
+        await NoteModel.deleteOne({ _id: req.params.id });
         return res.status(200).json({
             status: 200,
-            message: 'Note deleted successfully',
-            data: data
+            message: 'Note deleted successfully'
         });
     } catch (error) {
         return res.status(400).json({
