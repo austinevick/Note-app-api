@@ -6,8 +6,6 @@ import { loginValidation, registerValidation } from './middleware/SchemaValidati
 const router = express.Router();
 
 
-
-
 //// Auth
 router.post('/register', registerValidation, register);
 router.post('/login', loginValidation, login);
@@ -19,7 +17,5 @@ router.get('/note/archived', getArchivedNotes);
 router.post('/note', createNote);
 router.put('/note/:id', updateNote);
 router.delete('/note/:id', deleteNote);
-
-
 
 export default router;

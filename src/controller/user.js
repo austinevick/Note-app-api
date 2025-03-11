@@ -1,4 +1,7 @@
+import { generateAccessToken } from "../middleware/ProtectRoute.js";
 import UserModel from "../model/User.js";
+import bcrypt from 'bcrypt';
+
 
 export const register = async (req, res) => {
     try {
@@ -6,8 +9,8 @@ export const register = async (req, res) => {
 
         const existingUser = await UserModel.findOne({ email: email });
         if (existingUser) {
-            return res.status(200).json({
-                status: 200,
+            return res.status(400).json({
+                status: 400,
                 message: 'user already exist'
             });
         } else {
@@ -20,8 +23,8 @@ export const register = async (req, res) => {
             const userData = await user.save();
             const data = await UserModel.findOne(userData).select('-password');
             const token = generateAccessToken(data);
-            return res.status(201).json({
-                status: 201,
+            return res.status(200).json({
+                status: 200,
                 message: 'user created successfully',
                 data: data,
                 token: token

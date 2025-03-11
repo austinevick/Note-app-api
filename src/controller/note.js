@@ -1,7 +1,6 @@
 import NoteModel from "../model/note.js";
 
 
-
 export const getNotes = async (req, res) => {
     try {
         const data = await NoteModel.find({ "isArchived": false })
@@ -14,7 +13,6 @@ export const getNotes = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-
         return res.status(400).json({
             status: 400,
             message: error.message
@@ -50,6 +48,7 @@ export const createNote = async (req, res) => {
             content: content
         });
         await note.save();
+
         return res.status(201).json({
             status: 201,
             message: 'Note created successfully',
