@@ -3,9 +3,41 @@ import NoteModel from "../model/note.js";
 
 export const getNotes = async (req, res) => {
     try {
-        const data = await NoteModel.find({ "isArchived": false })
-            .sort({ isPinned: -1 }).sort({ _id: -1 });
 
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const data = await NoteModel.find()
+            .where('isArchived').equals(false)
+            .sort({ isPinned: -1 }).sort({ _id: -1 })
+            .skip(skip).limit(limit).exec();
+
+        return res.status(200).json({
+            status: 200,
+            message: 'Note retrieved successfully',
+            data: data,
+            meta: {
+                page: page,
+                limit: limit,
+                total: data.length
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: 400,
+            message: error.message
+        });
+    }
+};
+
+export const searchNotes = async (req, res) => {
+    try {
+        const { keyword } = req.query;
+        const data = await NoteModel.find({
+            title: { $regex: keyword, $options: 'i' }
+
+        });
         return res.status(200).json({
             status: 200,
             message: 'Note retrieved successfully',
