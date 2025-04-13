@@ -64,7 +64,6 @@ export const getArchivedNotes = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-
         return res.status(400).json({
             status: 400,
             message: error.message
@@ -75,6 +74,12 @@ export const getArchivedNotes = async (req, res) => {
 export const createNote = async (req, res) => {
     try {
         const { title, content } = req.body;
+        if (!title || !content) {
+            return res.status(400).json({
+                status: 400,
+                message: 'Title or content must not be empty'
+            });
+        }
         const note = new NoteModel({
             title: title,
             content: content
